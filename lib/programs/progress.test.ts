@@ -9,5 +9,6 @@ describe("program progress", () => {
     expect(result.completedSkills).toBe(1);
     expect(result.coverage).toBe(11);
     expect(result.nextSkillId).toBe("opportunity-cost");
+    expect(result.checkpointReady).toBe(false);
   });
 });

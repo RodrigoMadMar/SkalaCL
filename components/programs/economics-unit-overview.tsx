@@ -31,8 +31,9 @@ export function EconomicsUnitOverview() {
         const id = ref.graphNodeId!; const done = completions.some((item) => item.skillId === id); const nodeMastery = mastery[id];
         return <Link key={ref.id} href={`/programs/business-core/units/${economicsUnit.id}/skills/${id}`} className={done ? "complete" : ""}><span>{String(ref.order).padStart(2, "0")}</span><div><h3>{localizedProgramText(ref.title, locale)}</h3><p>{ref.estimatedMinutes} min · {nodeMastery?.evidenceCount ?? 0} {copy.evidence}</p></div><strong>{done ? "✓" : nodeMastery?.mastery ?? 0}</strong><ArrowIcon /></Link>;
       })}
-      <Link href={`/programs/business-core/units/${economicsUnit.id}/checkpoint`} className={`checkpoint ${progress.checkpointCompleted ? "complete" : ""}`}><span>10</span><div><p className="section-label"><SparkIcon />{copy.checkpointTitle}</p><h3>{localizedProgramText(economicsUnit.checkpoint!.title, locale)}</h3><p>{economicsUnit.checkpoint!.estimatedMinutes} min · {progress.checkpointReady ? copy.ready : copy.locked}</p></div><strong>{progress.checkpointCompleted ? "✓" : progress.checkpointReady ? "→" : "·"}</strong><ArrowIcon /></Link>
+      {progress.checkpointReady || progress.checkpointCompleted
+        ? <Link href={`/programs/business-core/units/${economicsUnit.id}/checkpoint`} className={`checkpoint ${progress.checkpointCompleted ? "complete" : ""}`}><span>10</span><div><p className="section-label"><SparkIcon />{copy.checkpointTitle}</p><h3>{localizedProgramText(economicsUnit.checkpoint!.title, locale)}</h3><p>{economicsUnit.checkpoint!.estimatedMinutes} min · {copy.ready}</p></div><strong>{progress.checkpointCompleted ? "✓" : "→"}</strong><ArrowIcon /></Link>
+        : <div className="checkpoint unit-checkpoint-locked"><span>10</span><div><p className="section-label"><SparkIcon />{copy.checkpointTitle}</p><h3>{localizedProgramText(economicsUnit.checkpoint!.title, locale)}</h3><p>{economicsUnit.checkpoint!.estimatedMinutes} min · {copy.locked}</p></div><strong>·</strong></div>}
     </section>
   </div>;
 }
-

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { ArrowIcon, SparkIcon } from "@/components/layout/icons";
-import { economicsUnit } from "@/content/programs/business-core";
+import { economicsUnit, localizedProgramText, programCopy } from "@/content/programs/business-core";
 import { st, survia, surviaCopy, surviaDimensionNames } from "@/content/programs/survia";
 import { seedEvidence } from "@/content/mastery/seed";
 import { useI18n } from "@/i18n/provider";
@@ -13,17 +13,20 @@ import { buildMasteryMap } from "@/lib/demo/state";
 import { calculateMastery, type EvidenceEvent } from "@/lib/mastery/engine";
 import { createSurviaSession, nextSurviaStage, parseSurviaSession, surviaStages, surviaStorageKey, type SurviaSession } from "@/lib/programs/checkpoint-session";
 import { useSkalaState } from "@/lib/state/provider";
+import { deriveUnitProgress } from "@/lib/programs/progress";
 
 function Metrics({ items }: { items: [Record<"es-CL" | "en", string>, string][] }) { const { locale } = useI18n(); return <div className="survia-metrics">{items.map(([label, value]) => <div key={label.en}><span>{label[locale]}</span><strong>{value}</strong></div>)}</div>; }
 function TextForm({ name, value, label, cta, error, onSubmit }: { name: string; value?: string; label: string; cta: string; error: string; onSubmit: (value: string) => void }) { const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); onSubmit(new FormData(event.currentTarget).get(name)?.toString().trim() ?? ""); }; return <form onSubmit={submit}><label>{label}<textarea rows={6} name={name} defaultValue={value} /></label>{error && <p className="learning-error">{error}</p>}<button className="primary-action case-action">{cta}<ArrowIcon /></button></form>; }
 
 export function SurviaCheckpoint() {
-  const { locale } = useI18n(); const copy = surviaCopy[locale]; const { evidence, hydrated, addEvidence, completeCheckpoint, checkpointCompletions } = useSkalaState();
+  const { locale } = useI18n(); const copy = surviaCopy[locale]; const unitCopy = programCopy[locale]; const { evidence, completions, hydrated, addEvidence, completeCheckpoint, checkpointCompletions } = useSkalaState();
   const graph = useMemo(() => loadGraph(locale), [locale]); const mastery = buildMasteryMap(graph.nodes, evidence); const tracked = economicsUnit.checkpoint!.evidenceSkillIds; const masteryBefore = Object.fromEntries(tracked.map((id) => [id, mastery[id]?.mastery ?? 0]));
+  const unitProgress = deriveUnitProgress(economicsUnit, completions, checkpointCompletions, mastery);
   const [session, setSession] = useState<SurviaSession | null>(null); const [error, setError] = useState("");
   useEffect(() => { if (!hydrated || session) return; const task = window.setTimeout(() => setSession(parseSurviaSession(window.localStorage.getItem(surviaStorageKey), masteryBefore)), 0); return () => window.clearTimeout(task); }, [hydrated, masteryBefore, session]);
   useEffect(() => { if (session) window.localStorage.setItem(surviaStorageKey, JSON.stringify(session)); }, [session]);
   if (!session) return <div className="learning-loading" />;
+  if (!unitProgress.checkpointReady && !unitProgress.checkpointCompleted) return <div className="unit-checkpoint-gate page-frame"><p className="section-label"><SparkIcon />{unitCopy.checkpointTitle}</p><h1>{localizedProgramText(economicsUnit.checkpoint!.title, locale)}</h1><p>{unitCopy.locked}</p><Link className="primary-action" href={`/programs/business-core/units/${economicsUnit.id}`}>{copy.back}<ArrowIcon /></Link></div>;
   const index = surviaStages.indexOf(session.stage); const update = (patch: Partial<SurviaSession>, advance = false) => setSession((current) => current ? { ...current, ...patch, stage: advance ? nextSurviaStage(current.stage) : current.stage, updatedAt: new Date().toISOString() } : current);
   const restart = () => { window.localStorage.removeItem(surviaStorageKey); setError(""); setSession(createSurviaSession(masteryBefore)); };
   const submitLong = (field: keyof SurviaSession, value: string) => { if (value.length < 80) return setError(copy.responseLong); setError(""); update({ [field]: value }, true); };

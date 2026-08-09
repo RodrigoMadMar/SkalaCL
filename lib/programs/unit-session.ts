@@ -11,6 +11,7 @@ export type UnitSkillSession = {
   initialMastery: number;
   diagnosticChoice?: number;
   interactionValue: number;
+  quantitativeAnswer?: number;
   applicationResponse?: string;
   challengeResponse?: string;
   transferChoice?: number;
@@ -36,4 +37,3 @@ export function parseUnitSkillSession(raw: string | null, skillId: string, initi
 export function nextUnitSkillStage(stage: UnitSkillStage) {
   return unitSkillStages[Math.min(unitSkillStages.indexOf(stage) + 1, unitSkillStages.length - 1)];
 }
-

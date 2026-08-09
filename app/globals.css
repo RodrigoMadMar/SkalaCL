@@ -386,6 +386,9 @@ h1, h2, h3, p { margin-top: 0; }
 .unit-checkpoint-gate h1 { max-width:760px; margin:25px 0; font:clamp(52px,7vw,86px)/.94 var(--serif); font-weight:400; }
 .unit-checkpoint-gate > p:not(.section-label) { color:var(--muted); font:20px var(--serif); }
 .unit-checkpoint-gate .primary-action { margin-top:35px; }
+.unit-quantitative-input { margin-top:24px; padding:18px; display:flex; align-items:center; justify-content:space-between; gap:20px; border:1px solid var(--line); color:var(--muted); font-size:12px; }
+.unit-quantitative-input span { display:flex; align-items:center; gap:12px; font:9px var(--mono); text-transform:uppercase; }
+.unit-quantitative-input input { width:90px; padding:10px; border:1px solid var(--line-bright); background:var(--bg); color:var(--signal); font:16px var(--mono); }
 
 /* Phase 3 · structured case workspace */
 .case-preview-grid article.playable small { max-width: 270px; font: 12px/1.55 var(--sans); letter-spacing: 0; }.case-preview-grid article.playable .text-action { margin-top: 22px; color: #cbc6ff; }.case-tease { display: block; transition: border-color .18s ease,transform .18s ease; }.case-tease:hover { border-color: var(--line-bright); transform: translateY(-2px); }.case-tease > span { color: var(--intelligence); font-size: 9px; }

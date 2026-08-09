@@ -11,6 +11,7 @@ export type SkalaNodeData = {
   mastery: number;
   coverage?: number;
   contextLabel?: string;
+  recentlyUpdated?: boolean;
 };
 
 export type SkalaFlowNode = Node<SkalaNodeData, "skala">;
@@ -18,11 +19,12 @@ export type SkalaFlowNode = Node<SkalaNodeData, "skala">;
 export function SkalaNode({ data, selected }: NodeProps<SkalaFlowNode>) {
   const { t } = useI18n();
   return (
-    <div className={`graph-node graph-node-${data.kind} state-${data.state} ${data.contextLabel ? "cross-context" : ""} ${selected ? "selected" : ""}`}>
+    <div className={`graph-node graph-node-${data.kind} state-${data.state} ${data.contextLabel ? "cross-context" : ""} ${data.recentlyUpdated ? "recently-updated" : ""} ${selected ? "selected" : ""}`}>
       <Handle type="target" position={Position.Top} isConnectable={false} />
       {data.kind === "root" && <span className="node-system">{t("skala.system")}</span>}
       {data.kind === "skill" && <span className="node-dot" />}
       {data.contextLabel && <span className="node-context">↗ {data.contextLabel}</span>}
+      {data.recentlyUpdated && <span className="node-update-label">{t("skala.newEvidence")}</span>}
       <strong>{data.label}</strong>
       {data.kind !== "root" && <span>{data.kind === "skill" ? t("skala.masteryValue", { count: data.mastery || "—" }) : t("skala.coverageValue", { count: data.coverage ?? 0 })}</span>}
       {data.kind === "root" && <span>{t("skala.explored", { count: data.coverage ?? 0 })}</span>}

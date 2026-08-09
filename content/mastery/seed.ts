@@ -21,9 +21,9 @@ function eventsFor(skillId: string, source: readonly (readonly [EvidenceEvent["t
 export const seedEvidence: EvidenceEvent[] = [
   ...eventsFor("competitive-advantage", highEvidence),
   ...eventsFor("financial-statements", highEvidence.slice(0, 5)),
-  ...eventsFor("unit-economics", highEvidence, 1),
+  ...eventsFor("economics.unit-economics", highEvidence, 1),
   ...eventsFor("probability", highEvidence.slice(0, 4)),
-  ...eventsFor("ai-models-products", highEvidence, 1),
+  ...eventsFor("ai.model-landscape", highEvidence, 1),
   ...eventsFor("ai-training-inference", learningEvidence, 1),
   ...eventsFor("ai-inference-economics", learningEvidence, 1),
   ...eventsFor("ai-capability-feature-product", highEvidence.slice(0, 4)),

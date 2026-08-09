@@ -20,6 +20,6 @@ describe("internationalization", () => {
     expect(esGraph.nodes.map(({ id, parentId, prerequisites }) => ({ id, parentId, prerequisites })))
       .toEqual(enGraph.nodes.map(({ id, parentId, prerequisites }) => ({ id, parentId, prerequisites })));
     expect(esGraph.edges).toEqual(enGraph.edges);
-    expect(esGraph.nodes.find((node) => node.id === "ai-build-buy")?.title).not.toBe(enGraph.nodes.find((node) => node.id === "ai-build-buy")?.title);
+    expect(esGraph.nodes.find((node) => node.id === "ai.build-vs-buy")?.summary).not.toBe(enGraph.nodes.find((node) => node.id === "ai.build-vs-buy")?.summary);
   });
 });

@@ -18,4 +18,9 @@ describe("recommendNextSkill", () => {
     const result = recommendNextSkill([node("strategy", [], "business-core"), node("ai-skill")], {});
     expect(result?.skill.id).toBe("ai-skill");
   });
+
+  it("does not recommend a completed skill again", () => {
+    const result = recommendNextSkill([node("completed"), node("next")], {}, "ai", "completed", { completedSkillIds: ["completed"] });
+    expect(result?.skill.id).toBe("next");
+  });
 });

@@ -8,6 +8,15 @@ export type EvidenceEvent = {
   weight?: number;
   occurredAt: string;
   sourceId: string;
+  dimensions?: Record<string, number>;
+  metadata?: {
+    initialDecision?: string;
+    finalDecision?: string;
+    challengeType?: string;
+    rationaleSummary?: string;
+    evaluatorVersion?: string;
+    answerId?: string;
+  };
 };
 
 export type MasteryStatus = "unseen" | "learning" | "learned" | "mastered" | "demonstrated";

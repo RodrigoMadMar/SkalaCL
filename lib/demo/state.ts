@@ -4,9 +4,10 @@ import { calculateMastery, type SkillMastery } from "@/lib/mastery/engine";
 
 export type VisualNodeState = "distant" | "available" | "learning" | "mastered" | "demonstrated";
 
-export function buildMasteryMap(nodes: GraphNode[]): Record<string, SkillMastery> {
+export function buildMasteryMap(nodes: GraphNode[], userEvidence = [] as typeof seedEvidence): Record<string, SkillMastery> {
+  const evidence = [...seedEvidence, ...userEvidence];
   return Object.fromEntries(
-    nodes.filter((node) => node.type === "skill").map((node) => [node.id, calculateMastery(node.id, seedEvidence)]),
+    nodes.filter((node) => node.type === "skill").map((node) => [node.id, calculateMastery(node.id, evidence)]),
   );
 }
 

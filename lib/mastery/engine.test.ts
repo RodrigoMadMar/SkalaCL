@@ -21,4 +21,15 @@ describe("calculateMastery", () => {
     }));
     expect(calculateMastery("skill", events).status).not.toBe("mastered");
   });
+
+  it("turns one application plus recall into learning, not demonstrated expertise", () => {
+    const events: EvidenceEvent[] = [
+      { id: "application", skillId: "ai.build-vs-buy", type: "application", performance: 0.82, occurredAt: "2026-08-09T10:00:00Z", sourceId: "session-1" },
+      { id: "recall", skillId: "ai.build-vs-buy", type: "recall", performance: 1, occurredAt: "2026-08-09T10:01:00Z", sourceId: "session-1" },
+    ];
+    const result = calculateMastery("ai.build-vs-buy", events);
+    expect(result.mastery).toBeGreaterThan(0);
+    expect(result.status).toBe("learning");
+    expect(result.evidenceCount).toBe(2);
+  });
 });

@@ -8,6 +8,8 @@ import { loadGraph } from "@/lib/content/load-content";
 import { buildMasteryMap, getVisualState } from "@/lib/demo/state";
 import { useI18n } from "@/i18n/provider";
 import type { TranslationKey } from "@/i18n/config";
+import { BuildVsBuyLearningSession } from "@/components/learning/build-vs-buy-session";
+import { useSkalaState } from "@/lib/state/provider";
 
 const contentKeys: Record<string, TranslationKey> = {
   mapped: "content.mapped",
@@ -19,15 +21,17 @@ const contentKeys: Record<string, TranslationKey> = {
 export default function SkillPreviewPage() {
   const params = useParams<{ skillId: string }>();
   const { locale, t } = useI18n();
+  const { evidence: userEvidence } = useSkalaState();
+  if (params.skillId === "ai.build-vs-buy" || params.skillId === "ai-build-buy") return <BuildVsBuyLearningSession />;
   const graph = loadGraph(locale);
   const skill = graph.nodes.find((node) => node.id === params.skillId && node.type === "skill");
   if (!skill) return <div className="page-frame"><p>{t("learn.notFound")}</p></div>;
-  const masteryMap = buildMasteryMap(graph.nodes);
+  const masteryMap = buildMasteryMap(graph.nodes, userEvidence);
   const mastery = masteryMap[skill.id];
   const cluster = graph.nodes.find((node) => node.id === skill.parentId);
   const prereqs = skill.prerequisites.map((id) => graph.nodes.find((node) => node.id === id)).filter(Boolean);
   const state = getVisualState(skill, masteryMap);
-  const evidence = {
+  const evidenceBreakdown = {
     evidenceCount: mastery.evidenceCount,
     conceptChecks: Math.min(2, mastery.evidenceCount),
     appliedDecisions: Math.max(0, mastery.evidenceCount - 2),
@@ -50,7 +54,7 @@ export default function SkillPreviewPage() {
         </main>
         <aside>
           <div className="preview-stat"><span>{t("learn.currentMastery")}</span><strong>{mastery.mastery}</strong><small>{t(`common.${state === "demonstrated" ? "demonstrated" : state}` as TranslationKey)}</small></div>
-          <MasteryExplainer data={evidence} />
+          <MasteryExplainer data={evidenceBreakdown} />
           <dl className="skill-facts"><div><dt>{t("drawer.estimatedTime")}</dt><dd>{t("common.minutesLong", { count: skill.estimatedMinutes ?? 0 })}</dd></div><div><dt>{t("drawer.evidence")}</dt><dd>{t("common.recorded", { count: mastery.evidenceCount })}</dd></div><div><dt>{t("drawer.contentState")}</dt><dd>{t(contentKeys[skill.contentStatus])}</dd></div></dl>
           <div className="prerequisite-list"><p className="eyebrow">{t("drawer.prerequisites")}</p>{prereqs.length ? prereqs.map((item) => item && <span key={item.id}><i className="ready" />{item.title}</span>) : <span><i className="ready" />{t("drawer.openEntry")}</span>}</div>
           <Link href="/skala" className="text-action">{t("learn.inspectGraph")} <ArrowIcon /></Link>

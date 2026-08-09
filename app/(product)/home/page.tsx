@@ -8,19 +8,25 @@ import { buildMasteryMap } from "@/lib/demo/state";
 import { recommendNextSkill, type RecommendationFactor } from "@/lib/recommendation/engine";
 import { useI18n } from "@/i18n/provider";
 import type { TranslationKey } from "@/i18n/config";
+import { useSkalaState } from "@/lib/state/provider";
 
 const recommendationKeys: Record<RecommendationFactor, TranslationKey> = {
   activeDomain: "recommendation.activeDomain",
   prerequisites: "recommendation.prerequisites",
   available: "recommendation.available",
   continuity: "recommendation.continuity",
+  rubricGap: "recommendation.rubricGap",
 };
 
 export default function HomePage() {
   const { locale, t } = useI18n();
+  const { evidence, completions } = useSkalaState();
   const graph = loadGraph(locale);
-  const mastery = buildMasteryMap(graph.nodes);
-  const next = recommendNextSkill(graph.nodes, mastery, "ai", "ai-models-products");
+  const mastery = buildMasteryMap(graph.nodes, evidence);
+  const latest = completions.at(-1);
+  const next = recommendNextSkill(graph.nodes, mastery, "ai", latest?.skillId ?? "ai.model-landscape", {
+    completedSkillIds: completions.map((item) => item.skillId), weakestDimension: latest?.weakestDimension,
+  });
   if (!next) return null;
   const cluster = graph.nodes.find((node) => node.id === next.skill.parentId);
   const reasonKey = recommendationKeys[next.factors[0] ?? "available"];

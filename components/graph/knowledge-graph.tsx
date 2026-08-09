@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Background, Controls, MarkerType, MiniMap, ReactFlow, type Edge, type NodeMouseHandler,
 } from "@xyflow/react";
@@ -10,6 +10,8 @@ import { getVisualState, type VisualNodeState } from "@/lib/demo/state";
 import { useI18n } from "@/i18n/provider";
 import { SkalaNode, type SkalaFlowNode } from "./skala-node";
 import { SkillDrawer } from "./skill-drawer";
+import { recommendNextSkill } from "@/lib/recommendation/engine";
+import { trackLearningEvent } from "@/lib/analytics/learning";
 
 const nodeTypes = { skala: SkalaNode };
 type View = { type: "global" } | { type: "domain"; id: "business-core" | "ai" } | { type: "cluster"; id: string };
@@ -42,10 +44,20 @@ function edgeState(source: GraphNode, target: GraphNode, masteryMap: Record<stri
   return "distant";
 }
 
-export function KnowledgeGraph({ graph, masteryMap }: { graph: GraphDefinition; masteryMap: Record<string, SkillMastery> }) {
-  const { t } = useI18n();
-  const [view, setView] = useState<View>({ type: "global" });
+export function KnowledgeGraph({ graph, masteryMap, focusNodeId, showRecentUpdate = false, completedSkillIds = [] }: { graph: GraphDefinition; masteryMap: Record<string, SkillMastery>; focusNodeId?: string; showRecentUpdate?: boolean; completedSkillIds?: string[] }) {
+  const { locale, t } = useI18n();
+  const focusNode = graph.nodes.find((node) => node.id === focusNodeId);
+  const initialView: View = focusNode?.parentId ? { type: "cluster", id: focusNode.parentId } : { type: "global" };
+  const [view, setView] = useState<View>(initialView);
   const [selected, setSelected] = useState<GraphNode | null>(null);
+  useEffect(() => {
+    if (!focusNode?.parentId) return;
+    const task = window.setTimeout(() => {
+      setView({ type: "cluster", id: focusNode.parentId! });
+      if (showRecentUpdate) trackLearningEvent("graph_update_viewed", { skillId: focusNode.id, blockId: "graph", locale });
+    }, 0);
+    return () => window.clearTimeout(task);
+  }, [focusNode, locale, showRecentUpdate]);
   const visible = useMemo(() => makeVisibleNodes(graph, view), [graph, view]);
 
   const flowNodes = useMemo<SkalaFlowNode[]>(() => visible.map((node) => {
@@ -84,9 +96,10 @@ export function KnowledgeGraph({ graph, masteryMap }: { graph: GraphDefinition; 
         mastery: masteryMap[node.id]?.mastery ?? 0,
         coverage,
         contextLabel: context ? graph.nodes.find((item) => item.id === node.parentId)?.title : undefined,
+        recentlyUpdated: showRecentUpdate && node.id === focusNodeId,
       },
     };
-  }), [graph.nodes, masteryMap, view, visible]);
+  }), [focusNodeId, graph.nodes, masteryMap, showRecentUpdate, view, visible]);
 
   const edges = useMemo<Edge[]>(() => {
     const ids = new Set(visible.map((node) => node.id));
@@ -101,9 +114,12 @@ export function KnowledgeGraph({ graph, masteryMap }: { graph: GraphDefinition; 
         type: edge.type === "part_of" ? "smoothstep" : "default",
         markerEnd: edge.type === "requires" ? { type: MarkerType.ArrowClosed, width: 12, height: 12 } : undefined,
         className: `edge-${edge.type} edge-state-${state}`,
+        animated: showRecentUpdate && (edge.source === focusNodeId || edge.target === focusNodeId),
       };
     });
-  }, [graph.edges, graph.nodes, masteryMap, visible]);
+  }, [focusNodeId, graph.edges, graph.nodes, masteryMap, showRecentUpdate, visible]);
+
+  const next = showRecentUpdate ? recommendNextSkill(graph.nodes, masteryMap, "ai", focusNodeId, { completedSkillIds }) : null;
 
   const onNodeClick: NodeMouseHandler<SkalaFlowNode> = useCallback((_, flowNode) => {
     const node = graph.nodes.find((item) => item.id === flowNode.id);
@@ -141,8 +157,9 @@ export function KnowledgeGraph({ graph, masteryMap }: { graph: GraphDefinition; 
         <Controls showInteractive={false} />
         <MiniMap pannable zoomable nodeColor={(node) => node.data?.state === "mastered" ? "#c7ff4a" : node.data?.state === "learning" ? "#8b7cff" : "#434851"} maskColor="rgba(10,11,13,.82)" />
       </ReactFlow>
-      <div className="graph-activity"><i />{t("skala.connectionsFormed")}</div>
+      <div className="graph-activity"><i />{showRecentUpdate ? t("skala.newEvidence") : t("skala.connectionsFormed")}</div>
       <div className="graph-hint">{t("skala.hint")}</div>
+      {next && <a className="graph-next-move" href={`/learn/${next.skill.id}`} onClick={() => trackLearningEvent("next_move_opened", { skillId: next.skill.id, blockId: "graph", locale })}><span>{t("skala.nextMove")}</span><strong>{next.skill.title}</strong></a>}
       {selected && <SkillDrawer node={selected} allNodes={graph.nodes} mastery={masteryMap[selected.id]} visualState={getVisualState(selected, masteryMap)} onClose={() => setSelected(null)} />}
     </div>
   );

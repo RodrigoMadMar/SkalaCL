@@ -20,8 +20,8 @@ export const domainMasterySeed: DomainMasterySeed[] = [
   { id: "data-decisions", mastery: 29, coverage: 24, evidence: { evidenceCount: 5, conceptChecks: 3, appliedDecisions: 1, retainedChecks: 1, lastEvidence: "2026-07-27" } },
 ];
 
-export const demonstratedSkillIds = ["competitive-advantage", "unit-economics", "ai-models-products"];
+export const demonstratedSkillIds = ["competitive-advantage", "economics.unit-economics", "ai.model-landscape"];
 
 export const profileCapabilityIds = [
-  "ai-economics", "competitive-advantage", "pricing-strategy", "ai-build-buy", "unit-economics",
+  "ai-economics", "competitive-advantage", "pricing-strategy", "ai.build-vs-buy", "economics.unit-economics",
 ];

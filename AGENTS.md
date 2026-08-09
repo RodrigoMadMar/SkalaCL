@@ -21,6 +21,8 @@ Check the relevant spec:
 
 - Product scope: `/docs/PRD.md`
 - Principles: `/docs/PRODUCT_PRINCIPLES.md`
+- Curriculum: `/docs/CURRICULUM_V1.md`
+- Unit 01 authoring reference: `/docs/UNIT_01_ECONOMICS_OF_BUSINESS.md`
 - UX/visual behavior: `/docs/UX_SPEC.md`
 - Brand: `/docs/BRAND_SYSTEM.md`
 - Graph: `/docs/KNOWLEDGE_GRAPH.md`
@@ -32,6 +34,8 @@ Check the relevant spec:
 - Delivery phases: `/docs/MVP_SCOPE.md`
 
 If a requested implementation conflicts with these documents, preserve the product principle and surface the conflict rather than silently turning Skala into a conventional course platform.
+
+For Business Core, program, unit, checkpoint or capstone work, treat `CURRICULUM_V1.md` as the curriculum source of truth. Program/unit structures are curated traversals of graph skills and must not create duplicate mastery for the same skill.
 
 ## Coding principles
 

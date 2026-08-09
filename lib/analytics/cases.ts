@@ -1,5 +1,5 @@
 export type CaseAnalyticsName =
-  | "case_started" | "case_evidence_viewed" | "case_decision_submitted" | "case_challenge_answered"
+  | "case_started" | "case_evidence_viewed" | "case_evidence_cited" | "case_decision_submitted" | "case_challenge_answered"
   | "case_revision_submitted" | "case_completed" | "case_mastery_updated";
 
 export function trackCaseEvent(name: CaseAnalyticsName, metadata: Record<string, string | number | boolean>) {

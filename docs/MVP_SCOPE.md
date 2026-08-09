@@ -82,6 +82,10 @@ Deliver:
 - mastery update;
 - next-best-step recommendation.
 
+Reference implementation:
+
+- `docs/PHASE_2_REFERENCE_SKILL.md` defines `Build vs Buy` as the canonical end-to-end Phase 2 experience. Implement and validate that reference skill before scaling the renderer to additional skills.
+
 Acceptance:
 
 A user completes one 5–8 minute skill and sees their state visibly change in Your Skala.

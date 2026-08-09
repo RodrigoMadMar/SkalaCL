@@ -13,14 +13,25 @@ export type SkillCompletion = {
   weakestDimension?: string;
 };
 
-type PersistentState = { evidence: EvidenceEvent[]; completions: SkillCompletion[] };
+export type CaseCompletion = {
+  caseId: string;
+  sessionId: string;
+  completedAt: string;
+  version: string;
+  initialDecision: string;
+  finalDecision: string;
+  overallPerformance: number;
+};
+
+type PersistentState = { evidence: EvidenceEvent[]; completions: SkillCompletion[]; caseCompletions: CaseCompletion[] };
 type StateContext = PersistentState & {
   hydrated: boolean;
   addEvidence: (events: EvidenceEvent[]) => void;
   completeSkill: (completion: SkillCompletion) => void;
+  completeCase: (completion: CaseCompletion) => void;
 };
 
-const emptyState: PersistentState = { evidence: [], completions: [] };
+const emptyState: PersistentState = { evidence: [], completions: [], caseCompletions: [] };
 const Context = createContext<StateContext | null>(null);
 
 function validEvidence(event: unknown): event is EvidenceEvent {
@@ -39,12 +50,22 @@ function validCompletion(item: unknown): item is SkillCompletion {
     && typeof candidate.completedAt === "string" && typeof candidate.version === "string";
 }
 
+function validCaseCompletion(item: unknown): item is CaseCompletion {
+  if (!item || typeof item !== "object") return false;
+  const candidate = item as Partial<CaseCompletion>;
+  return typeof candidate.caseId === "string" && typeof candidate.sessionId === "string"
+    && typeof candidate.completedAt === "string" && typeof candidate.version === "string"
+    && typeof candidate.initialDecision === "string" && typeof candidate.finalDecision === "string"
+    && typeof candidate.overallPerformance === "number" && candidate.overallPerformance >= 0 && candidate.overallPerformance <= 1;
+}
+
 export function parsePersistentState(raw: string | null): PersistentState {
   try {
     const parsed = JSON.parse(raw ?? "null") as Partial<PersistentState> | null;
     return {
       evidence: Array.isArray(parsed?.evidence) ? parsed.evidence.filter(validEvidence) : [],
       completions: Array.isArray(parsed?.completions) ? parsed.completions.filter(validCompletion) : [],
+      caseCompletions: Array.isArray(parsed?.caseCompletions) ? parsed.caseCompletions.filter(validCaseCompletion) : [],
     };
   } catch {
     return emptyState;
@@ -80,7 +101,14 @@ export function SkalaStateProvider({ children }: { children: React.ReactNode }) 
       : [...current.completions, completion],
   })), []);
 
-  const value = useMemo(() => ({ ...state, hydrated, addEvidence, completeSkill }), [state, hydrated, addEvidence, completeSkill]);
+  const completeCase = useCallback((completion: CaseCompletion) => setState((current) => ({
+    ...current,
+    caseCompletions: current.caseCompletions.some((item) => item.sessionId === completion.sessionId)
+      ? current.caseCompletions
+      : [...current.caseCompletions, completion],
+  })), []);
+
+  const value = useMemo(() => ({ ...state, hydrated, addEvidence, completeSkill, completeCase }), [state, hydrated, addEvidence, completeSkill, completeCase]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

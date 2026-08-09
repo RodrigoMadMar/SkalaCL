@@ -70,13 +70,13 @@ export default function HomePage() {
           <div className="domain-pulse"><span>{t("home.core")}</span><strong>31</strong><small>{t("common.mastery")}</small></div>
           <Link href="/skala" className="text-action"><GraphIcon /> {t("home.openMap")} <ArrowIcon /></Link>
         </div>
-        <div className="case-tease">
+        <Link href="/cases/ai-copilot-economics" className="case-tease">
           <p className="eyebrow">{t("home.weeklyCase")}</p>
           <p className="case-number">{t("common.caseCode")} 002 · {t("common.minutes", { count: 18 })}</p>
           <h3>{t("home.caseTitle")}</h3>
           <p>{t("home.caseSummary")}</p>
-          <span>{t("home.caseUnlock")}</span>
-        </div>
+          <span>{t("home.openCase")} <ArrowIcon /></span>
+        </Link>
       </section>
     </div>
   );

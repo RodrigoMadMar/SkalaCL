@@ -16,6 +16,9 @@ export type EvidenceEvent = {
     rationaleSummary?: string;
     evaluatorVersion?: string;
     answerId?: string;
+    caseId?: string;
+    caseVersion?: string;
+    trajectory?: string;
   };
 };
 

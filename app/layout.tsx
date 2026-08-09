@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import "@xyflow/react/dist/style.css";
 import "./globals.css";
+import { I18nProvider } from "@/i18n/provider";
+import { defaultLocale, translate } from "@/i18n/config";
 
 export const metadata: Metadata = {
-  title: "Skala — Business, mastered.",
-  description: "An evolving map of business expertise.",
+  title: translate(defaultLocale, "meta.title"),
+  description: translate(defaultLocale, "meta.description"),
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang={defaultLocale} suppressHydrationWarning>
+      <body><I18nProvider>{children}</I18nProvider></body>
     </html>
   );
 }

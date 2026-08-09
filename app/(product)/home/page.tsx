@@ -1,61 +1,75 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowIcon, GraphIcon, SparkIcon } from "@/components/layout/icons";
 import { MasteryRing } from "@/components/mastery/mastery-ring";
 import { loadGraph } from "@/lib/content/load-content";
 import { buildMasteryMap } from "@/lib/demo/state";
-import { recommendNextSkill } from "@/lib/recommendation/engine";
+import { recommendNextSkill, type RecommendationFactor } from "@/lib/recommendation/engine";
+import { useI18n } from "@/i18n/provider";
+import type { TranslationKey } from "@/i18n/config";
+
+const recommendationKeys: Record<RecommendationFactor, TranslationKey> = {
+  activeDomain: "recommendation.activeDomain",
+  prerequisites: "recommendation.prerequisites",
+  available: "recommendation.available",
+  continuity: "recommendation.continuity",
+};
 
 export default function HomePage() {
-  const graph = loadGraph();
+  const { locale, t } = useI18n();
+  const graph = loadGraph(locale);
   const mastery = buildMasteryMap(graph.nodes);
   const next = recommendNextSkill(graph.nodes, mastery, "ai", "ai-models-products");
   if (!next) return null;
   const cluster = graph.nodes.find((node) => node.id === next.skill.parentId);
+  const reasonKey = recommendationKeys[next.factors[0] ?? "available"];
 
   return (
     <div className="home-page page-frame">
       <header className="home-header">
-        <div><p className="eyebrow">SATURDAY · 08 AUG</p><h1>Good evening, Martina.</h1><p>One precise move compounds from here.</p></div>
-        <div className="system-status"><span />SYSTEM ONLINE</div>
+        <div><p className="eyebrow">{t("home.date")}</p><h1>{t("home.greeting")}</h1><p>{t("home.intro")}</p></div>
+        <div className="system-status"><span />{t("home.systemOnline")}</div>
       </header>
 
       <section className="next-move" aria-labelledby="next-move-title">
         <div className="next-ambient" aria-hidden="true" />
         <div className="next-copy">
-          <div className="section-label"><SparkIcon /> YOUR NEXT MOVE</div>
-          <p className="skill-code">SKILL {next.skill.id.toUpperCase().replaceAll("-", ".")}</p>
+          <div className="section-label"><SparkIcon /> {t("home.nextMove")}</div>
+          <p className="skill-code">{t("common.skill")} {next.skill.id.toUpperCase().replaceAll("-", ".")}</p>
           <h2 id="next-move-title">{next.skill.title}</h2>
-          <p className="next-summary">{next.skill.summary} This connects your foundation in models and business economics to a decision you can use.</p>
+          <p className="next-summary">{t("home.nextSummary", { summary: next.skill.summary })}</p>
           <div className="meta-line">
             <span>{cluster?.title}</span><i />
-            <span>DIFFICULTY {next.skill.difficulty}</span><i />
-            <span>{next.skill.estimatedMinutes} MIN</span>
+            <span>{t("common.difficulty")} {next.skill.difficulty}</span><i />
+            <span>{t("common.minutes", { count: next.skill.estimatedMinutes ?? 0 })}</span>
           </div>
-          <Link href={`/learn/${next.skill.id}`} className="primary-action">START <ArrowIcon /></Link>
-          <p className="reason-line">Selected because it {next.factors[0]?.toLowerCase()}.</p>
+          <Link href={`/learn/${next.skill.id}`} className="primary-action">{t("home.start")} <ArrowIcon /></Link>
+          <p className="reason-line">{t("home.selectedReason", { reason: t(reasonKey) })}</p>
         </div>
-        <div className="next-visual" aria-label="Path preview">
+        <div className="next-visual" aria-label={t("home.pathLabel")}>
           <div className="orbit orbit-one" /><div className="orbit orbit-two" />
-          <span className="path-node mastered">MODELS</span>
-          <span className="path-node learning">ECONOMICS</span>
-          <span className="path-node target">NEXT</span>
+          <span className="path-node mastered"><b>{t("home.models")}</b><small>✓</small></span>
+          <span className="path-node learning"><b>{t("home.economics")}</b><small>◐</small></span>
+          <span className="path-node target"><b>{next.skill.title}</b><small>{t("home.next")}</small></span>
+          <p className="path-proof"><strong>{t("home.foundationReady")}</strong>{t("home.pathConnection")}</p>
         </div>
       </section>
 
       <section className="home-lower">
         <div className="progress-strip">
-          <MasteryRing value={38} />
-          <div className="progress-copy"><p className="eyebrow">YOUR SKALA</p><h3>Expertise is taking shape.</h3><p>7 skills mastered · 46 evidence events</p></div>
-          <div className="domain-pulse"><span>AI</span><strong>44</strong><small>MASTERY</small></div>
-          <div className="domain-pulse"><span>CORE</span><strong>31</strong><small>MASTERY</small></div>
-          <Link href="/skala" className="text-action"><GraphIcon /> OPEN THE MAP <ArrowIcon /></Link>
+          <MasteryRing value={38} label={t("home.yourSkala")} />
+          <div className="progress-copy"><p className="eyebrow">{t("home.yourSkala")}</p><h3>{t("home.evolving")}</h3><p>{t("home.progress")}</p></div>
+          <div className="domain-pulse"><span>{t("common.aiAbbr")}</span><strong>44</strong><small>{t("common.mastery")}</small></div>
+          <div className="domain-pulse"><span>{t("home.core")}</span><strong>31</strong><small>{t("common.mastery")}</small></div>
+          <Link href="/skala" className="text-action"><GraphIcon /> {t("home.openMap")} <ArrowIcon /></Link>
         </div>
         <div className="case-tease">
-          <p className="eyebrow">THIS WEEK&apos;S CASE</p>
-          <p className="case-number">CASE 002 · 18 MIN</p>
-          <h3>When intelligence has a marginal cost.</h3>
-          <p>Price an AI copilot without letting adoption destroy gross margin.</p>
-          <span>Unlocks after 2 foundation skills</span>
+          <p className="eyebrow">{t("home.weeklyCase")}</p>
+          <p className="case-number">{t("common.caseCode")} 002 · {t("common.minutes", { count: 18 })}</p>
+          <h3>{t("home.caseTitle")}</h3>
+          <p>{t("home.caseSummary")}</p>
+          <span>{t("home.caseUnlock")}</span>
         </div>
       </section>
     </div>

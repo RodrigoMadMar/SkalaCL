@@ -1,4 +1,4 @@
-export function MasteryRing({ value, size = 92, label = "SKALA" }: { value: number; size?: number; label?: string }) {
+export function MasteryRing({ value, size = 92, label }: { value: number; size?: number; label: string }) {
   const radius = 42;
   const circumference = 2 * Math.PI * radius;
   return (

@@ -4,8 +4,10 @@ import type { SkillMastery } from "@/lib/mastery/engine";
 export type Recommendation = {
   skill: GraphNode;
   score: number;
-  factors: string[];
+  factors: RecommendationFactor[];
 };
+
+export type RecommendationFactor = "activeDomain" | "prerequisites" | "available" | "continuity";
 
 export function recommendNextSkill(
   nodes: GraphNode[],
@@ -21,21 +23,21 @@ export function recommendNextSkill(
 
   const ranked = eligible.map((skill) => {
     const current = masteryBySkill[skill.id]?.mastery ?? 0;
-    const factors: string[] = [];
+    const factors: RecommendationFactor[] = [];
     let score = (100 - current) * 0.42;
     if (skill.primaryDomain === activeDomain) {
       score += 28;
-      factors.push("Matches your active AI domain");
+      factors.push("activeDomain");
     }
     if (skill.prerequisites.length) {
       score += 12;
-      factors.push("Builds on prerequisites you already hold");
+      factors.push("prerequisites");
     } else {
-      factors.push("Available now with no unmet prerequisites");
+      factors.push("available");
     }
     if (lastSkillId && skill.relatedSkills.includes(lastSkillId)) {
       score += 8;
-      factors.push("Continues your recent line of inquiry");
+      factors.push("continuity");
     }
     return { skill, score, factors };
   }).sort((a, b) => b.score - a.score || a.skill.id.localeCompare(b.skill.id));

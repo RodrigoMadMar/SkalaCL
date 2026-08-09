@@ -126,7 +126,7 @@ export const clusters: ClusterSeed[] = [
       { id: "ai-cost-quality", title: "Cost–quality frontier", summary: "Choose the lowest-cost system that reliably clears a task's quality bar.", prerequisites: ["ai-inference-economics"], status: "playable" },
       { id: "ai-gross-margins", title: "AI gross margins", summary: "Model how inference, support and usage concentration affect margin.", prerequisites: ["ai-inference-economics", "contribution-margin"], status: "playable" },
       { id: "ai-variable-cost", title: "Usage-driven variable cost", summary: "Identify which AI costs scale with requests, tokens and workflow depth.", prerequisites: ["ai-inference-economics"], status: "outlined" },
-      { id: "ai-pricing", title: "Pricing AI products", summary: "Align price metric, customer value and volatile cost-to-serve.", prerequisites: ["ai-inference-economics", "pricing-strategy"], status: "playable" },
+      { id: "ai-pricing", title: "Pricing AI products", summary: "Align price metric, customer value and volatile cost-to-serve.", prerequisites: ["ai-inference-economics", "pricing-strategy"], related: ["unit-economics"], status: "playable" },
       { id: "ai-model-routing", title: "Model routing economics", summary: "Allocate tasks across models to control cost while preserving outcomes.", prerequisites: ["ai-cost-quality"], status: "mapped" },
     ],
   },
@@ -135,7 +135,7 @@ export const clusters: ClusterSeed[] = [
     summary: "Find defensible advantage when model capabilities diffuse quickly.",
     skills: [
       { id: "ai-capability-feature-product", title: "Capability, feature or product", summary: "Determine whether an AI capability can sustain a complete value proposition.", prerequisites: ["ai-models-products"], status: "validated" },
-      { id: "ai-build-buy", title: "Build vs buy", summary: "Choose where ownership creates advantage and where it only adds burden.", prerequisites: ["ai-capability-feature-product"], status: "playable" },
+      { id: "ai-build-buy", title: "Build vs buy", summary: "Choose where ownership creates advantage and where it only adds burden.", prerequisites: ["ai-capability-feature-product"], related: ["unit-economics", "capital-allocation"], status: "playable" },
       { id: "ai-model-commoditization", title: "Model commoditization", summary: "Assess what remains defensible as base model quality converges.", prerequisites: ["competitive-advantage", "ai-models-products"], status: "playable" },
       { id: "ai-distribution-advantage", title: "Distribution advantage", summary: "Evaluate access, workflow presence and trust as routes to adoption.", prerequisites: ["competitive-advantage"], status: "playable" },
       { id: "ai-data-advantage", title: "Data advantage", summary: "Test whether proprietary data actually improves outcomes and compounds.", prerequisites: ["competitive-advantage", "ai-evaluation-basics"], status: "outlined" },

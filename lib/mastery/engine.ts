@@ -19,6 +19,9 @@ export type EvidenceEvent = {
     caseId?: string;
     caseVersion?: string;
     trajectory?: string;
+    programId?: string;
+    unitId?: string;
+    checkpointId?: string;
   };
 };
 

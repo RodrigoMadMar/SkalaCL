@@ -3,6 +3,7 @@ import { localizeNodes } from "@/content/graph/translations";
 import { getExpandedSkill } from "@/content/skills/expanded";
 import { defaultLocale, type Locale } from "@/i18n/config";
 import { graphDefinitionSchema, type GraphDefinition } from "./schemas";
+import { getEconomicsSkill } from "@/content/programs/economics-unit";
 
 export function loadGraph(locale: Locale = defaultLocale): GraphDefinition {
   const contentAlignedNodes = graphNodes.map((node) => {
@@ -10,6 +11,7 @@ export function loadGraph(locale: Locale = defaultLocale): GraphDefinition {
     if (node.id === "ai.build-vs-buy") return { ...node, contentStatus: "validated" as const };
     const content = getExpandedSkill(node.id);
     if (content) return { ...node, contentStatus: content.reviewStatus === "validated" ? "validated" as const : "playable" as const };
+    if (getEconomicsSkill(node.id)) return { ...node, contentStatus: node.contentStatus === "validated" ? "validated" as const : "playable" as const };
     return { ...node, contentStatus: ["playable", "validated"].includes(node.contentStatus) ? "outlined" as const : node.contentStatus };
   });
   const nodes = localizeNodes(contentAlignedNodes, locale);

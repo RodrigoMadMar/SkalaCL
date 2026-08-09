@@ -23,15 +23,24 @@ export type CaseCompletion = {
   overallPerformance: number;
 };
 
-type PersistentState = { evidence: EvidenceEvent[]; completions: SkillCompletion[]; caseCompletions: CaseCompletion[] };
+export type CheckpointCompletion = {
+  checkpointId: string;
+  sessionId: string;
+  completedAt: string;
+  version: string;
+  overallPerformance: number;
+};
+
+type PersistentState = { evidence: EvidenceEvent[]; completions: SkillCompletion[]; caseCompletions: CaseCompletion[]; checkpointCompletions: CheckpointCompletion[] };
 type StateContext = PersistentState & {
   hydrated: boolean;
   addEvidence: (events: EvidenceEvent[]) => void;
   completeSkill: (completion: SkillCompletion) => void;
   completeCase: (completion: CaseCompletion) => void;
+  completeCheckpoint: (completion: CheckpointCompletion) => void;
 };
 
-const emptyState: PersistentState = { evidence: [], completions: [], caseCompletions: [] };
+const emptyState: PersistentState = { evidence: [], completions: [], caseCompletions: [], checkpointCompletions: [] };
 const Context = createContext<StateContext | null>(null);
 
 function validEvidence(event: unknown): event is EvidenceEvent {
@@ -59,6 +68,14 @@ function validCaseCompletion(item: unknown): item is CaseCompletion {
     && typeof candidate.overallPerformance === "number" && candidate.overallPerformance >= 0 && candidate.overallPerformance <= 1;
 }
 
+function validCheckpointCompletion(item: unknown): item is CheckpointCompletion {
+  if (!item || typeof item !== "object") return false;
+  const candidate = item as Partial<CheckpointCompletion>;
+  return typeof candidate.checkpointId === "string" && typeof candidate.sessionId === "string"
+    && typeof candidate.completedAt === "string" && typeof candidate.version === "string"
+    && typeof candidate.overallPerformance === "number" && candidate.overallPerformance >= 0 && candidate.overallPerformance <= 1;
+}
+
 export function parsePersistentState(raw: string | null): PersistentState {
   try {
     const parsed = JSON.parse(raw ?? "null") as Partial<PersistentState> | null;
@@ -66,6 +83,7 @@ export function parsePersistentState(raw: string | null): PersistentState {
       evidence: Array.isArray(parsed?.evidence) ? parsed.evidence.filter(validEvidence) : [],
       completions: Array.isArray(parsed?.completions) ? parsed.completions.filter(validCompletion) : [],
       caseCompletions: Array.isArray(parsed?.caseCompletions) ? parsed.caseCompletions.filter(validCaseCompletion) : [],
+      checkpointCompletions: Array.isArray(parsed?.checkpointCompletions) ? parsed.checkpointCompletions.filter(validCheckpointCompletion) : [],
     };
   } catch {
     return emptyState;
@@ -108,7 +126,14 @@ export function SkalaStateProvider({ children }: { children: React.ReactNode }) 
       : [...current.caseCompletions, completion],
   })), []);
 
-  const value = useMemo(() => ({ ...state, hydrated, addEvidence, completeSkill, completeCase }), [state, hydrated, addEvidence, completeSkill, completeCase]);
+  const completeCheckpoint = useCallback((completion: CheckpointCompletion) => setState((current) => ({
+    ...current,
+    checkpointCompletions: current.checkpointCompletions.some((item) => item.sessionId === completion.sessionId)
+      ? current.checkpointCompletions
+      : [...current.checkpointCompletions, completion],
+  })), []);
+
+  const value = useMemo(() => ({ ...state, hydrated, addEvidence, completeSkill, completeCase, completeCheckpoint }), [state, hydrated, addEvidence, completeSkill, completeCase, completeCheckpoint]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

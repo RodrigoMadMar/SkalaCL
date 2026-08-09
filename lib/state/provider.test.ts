@@ -15,6 +15,6 @@ describe("persistent user state", () => {
   });
 
   it("recovers from malformed JSON", () => {
-    expect(parsePersistentState("{")).toEqual({ evidence: [], completions: [], caseCompletions: [] });
+    expect(parsePersistentState("{")).toEqual({ evidence: [], completions: [], caseCompletions: [], checkpointCompletions: [] });
   });
 });

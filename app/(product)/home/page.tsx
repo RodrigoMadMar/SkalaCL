@@ -9,6 +9,8 @@ import { recommendNextSkill, type RecommendationFactor } from "@/lib/recommendat
 import { useI18n } from "@/i18n/provider";
 import type { TranslationKey } from "@/i18n/config";
 import { useSkalaState } from "@/lib/state/provider";
+import { economicsUnit, localizedProgramText, programCopy } from "@/content/programs/business-core";
+import { deriveUnitProgress } from "@/lib/programs/progress";
 
 const recommendationKeys: Record<RecommendationFactor, TranslationKey> = {
   activeDomain: "recommendation.activeDomain",
@@ -20,9 +22,11 @@ const recommendationKeys: Record<RecommendationFactor, TranslationKey> = {
 
 export default function HomePage() {
   const { locale, t } = useI18n();
-  const { evidence, completions } = useSkalaState();
+  const { evidence, completions, checkpointCompletions } = useSkalaState();
   const graph = loadGraph(locale);
   const mastery = buildMasteryMap(graph.nodes, evidence);
+  const unitProgress = deriveUnitProgress(economicsUnit, completions, checkpointCompletions, mastery);
+  const programText = programCopy[locale];
   const latest = completions.at(-1);
   const next = recommendNextSkill(graph.nodes, mastery, "ai", latest?.skillId ?? "ai.model-landscape", {
     completedSkillIds: completions.map((item) => item.skillId), weakestDimension: latest?.weakestDimension,
@@ -77,6 +81,11 @@ export default function HomePage() {
           <p>{t("home.caseSummary")}</p>
           <span>{t("home.openCase")} <ArrowIcon /></span>
         </Link>
+      </section>
+      <section className="home-program-rail">
+        <div><p className="section-label"><SparkIcon />{programText.eyebrow} · 01</p><h2>{localizedProgramText(economicsUnit.title, locale)}</h2><p>{localizedProgramText(economicsUnit.coreQuestion, locale)}</p></div>
+        <div className="home-program-progress"><strong>{unitProgress.completion}%</strong><span>{programText.progress}</span><i><b style={{ width: `${unitProgress.completion}%` }} /></i></div>
+        <Link className="text-action" href={`/programs/business-core/units/${economicsUnit.id}`}>{unitProgress.completedSkills ? programText.continue : programText.begin}<ArrowIcon /></Link>
       </section>
     </div>
   );

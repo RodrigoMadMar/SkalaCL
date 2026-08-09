@@ -29,7 +29,7 @@ export const clusters: ClusterSeed[] = [
       { id: "positioning", title: "Strategic positioning", summary: "Connect a distinctive value proposition to a coherent activity system.", prerequisites: ["competitive-advantage"], status: "playable" },
       { id: "switching-costs", title: "Switching costs", summary: "Diagnose what makes customers stay and how durable that friction really is.", status: "playable" },
       { id: "network-effects", title: "Network effects", summary: "Distinguish real network effects from scale, virality and aggregation.", prerequisites: ["competitive-advantage"], status: "outlined" },
-      { id: "pricing-strategy", title: "Pricing strategy", summary: "Select a price architecture that captures value without damaging adoption.", related: ["elasticity", "economics.unit-economics"], status: "playable" },
+      { id: "pricing-strategy", title: "Pricing strategy", summary: "Select a price architecture that captures value without damaging adoption.", prerequisites: ["elasticity", "market-structure"], related: ["economics.unit-economics", "competitive-interaction-game-theory"], status: "playable" },
       { id: "business-models", title: "Business models", summary: "Map value creation, delivery and capture as one connected system.", status: "outlined" },
       { id: "corporate-strategy", title: "Corporate strategy", summary: "Evaluate whether a portfolio creates more value together than apart.", prerequisites: ["competitive-advantage"], status: "mapped" },
     ],
@@ -54,10 +54,12 @@ export const clusters: ClusterSeed[] = [
     skills: [
       { id: "supply-demand", title: "Supply & demand", summary: "Reason about how markets clear and why prices move.", status: "playable" },
       { id: "elasticity", title: "Elasticity", summary: "Estimate how strongly demand responds to price and context changes.", prerequisites: ["supply-demand"], status: "validated" },
-      { id: "marginal-cost", title: "Marginal cost", summary: "Identify the incremental cost of serving one more unit of demand.", status: "playable" },
       { id: "opportunity-cost", title: "Opportunity cost", summary: "Make the value of the best forgone alternative explicit.", status: "playable" },
-      { id: "market-structure", title: "Market structure", summary: "Connect concentration, differentiation and entry barriers to conduct.", prerequisites: ["supply-demand"], status: "outlined" },
+      { id: "marginal-thinking", title: "Marginal thinking", summary: "Evaluate the next increment instead of relying on totals or averages.", prerequisites: ["opportunity-cost"], status: "playable" },
+      { id: "marginal-cost", title: "Marginal cost", summary: "Identify the incremental cost of serving one more unit of demand.", prerequisites: ["marginal-thinking"], status: "playable" },
+      { id: "market-structure", title: "Market structure", summary: "Connect concentration, differentiation and entry barriers to conduct.", prerequisites: ["supply-demand"], status: "playable" },
       { id: "incentives", title: "Incentives", summary: "Predict behavior by examining rewards, constraints and information.", status: "playable" },
+      { id: "competitive-interaction-game-theory", title: "Competitive interaction & game theory", summary: "Anticipate rational responses when strategic choices are interdependent.", prerequisites: ["market-structure"], related: ["industry-structure", "pricing-strategy"], status: "playable" },
     ],
   },
   {

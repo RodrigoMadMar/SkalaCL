@@ -12,6 +12,8 @@ import { BuildVsBuyLearningSession } from "@/components/learning/build-vs-buy-se
 import { ExpandedSkillSession } from "@/components/learning/expanded-skill-session";
 import { getExpandedSkill } from "@/content/skills/expanded";
 import { useSkalaState } from "@/lib/state/provider";
+import { getEconomicsSkill } from "@/content/programs/economics-unit";
+import { EconomicsSkillSession } from "@/components/programs/economics-skill-session";
 
 const contentKeys: Record<string, TranslationKey> = {
   mapped: "content.mapped",
@@ -25,6 +27,7 @@ export default function SkillPreviewPage() {
   const { locale, t } = useI18n();
   const { evidence: userEvidence } = useSkalaState();
   if (params.skillId === "ai.build-vs-buy" || params.skillId === "ai-build-buy") return <BuildVsBuyLearningSession />;
+  if (getEconomicsSkill(params.skillId)) return <EconomicsSkillSession skillId={params.skillId} />;
   if (getExpandedSkill(params.skillId)) return <ExpandedSkillSession skillId={params.skillId} />;
   const graph = loadGraph(locale);
   const skill = graph.nodes.find((node) => node.id === params.skillId && node.type === "skill");

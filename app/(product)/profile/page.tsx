@@ -12,9 +12,12 @@ import { useI18n } from "@/i18n/provider";
 import type { TranslationKey } from "@/i18n/config";
 import { trackProfileEvent } from "@/lib/analytics/profile";
 import { loadGraph } from "@/lib/content/load-content";
+import { buildMasteryMap } from "@/lib/demo/state";
 import { buildExpertiseProfile } from "@/lib/profile/model";
 import { useSkalaState } from "@/lib/state/provider";
 import type { EvidenceType } from "@/lib/mastery/engine";
+import { economicsUnit, localizedProgramText, programCopy } from "@/content/programs/business-core";
+import { deriveUnitProgress } from "@/lib/programs/progress";
 
 const evidenceTypeKeys: Record<EvidenceType, TranslationKey> = {
   exposure: "profile.evidenceExposure",
@@ -26,7 +29,7 @@ const evidenceTypeKeys: Record<EvidenceType, TranslationKey> = {
 
 export default function ProfilePage() {
   const { locale, t } = useI18n();
-  const { evidence, caseCompletions } = useSkalaState();
+  const { evidence, caseCompletions, completions, checkpointCompletions } = useSkalaState();
   const [shareOpen, setShareOpen] = useState(false);
   const graph = useMemo(() => loadGraph(locale), [locale]);
   const profile = useMemo(
@@ -34,6 +37,8 @@ export default function ProfilePage() {
     [caseCompletions, evidence, graph],
   );
   const strongestArea = profile.specializations[0]?.title ?? profile.domains[0]?.title ?? t("brand.name");
+  const unitProgress = deriveUnitProgress(economicsUnit, completions, checkpointCompletions, buildMasteryMap(graph.nodes, evidence));
+  const programText = programCopy[locale];
   const nodeName = (id: string) => graph.nodes.find((node) => node.id === id)?.title ?? id;
   const formatDate = (value: string | null) => value
     ? new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(value))
@@ -86,6 +91,12 @@ export default function ProfilePage() {
         <div><strong>{profile.masteredSkills.length}</strong><span>{t("profile.skillsMastered")}</span></div>
         <div><strong>{profile.casesCompleted}</strong><span>{t("profile.casesCompleted")}</span></div>
         <div><strong>{profile.evidenceCount}</strong><span>{t("profile.evidenceEvents")}</span></div>
+      </section>
+
+      <section className="profile-program-progress">
+        <div><p className="section-label"><GraphIcon />{programText.eyebrow} · 01</p><h2>{localizedProgramText(economicsUnit.title, locale)}</h2><p>{localizedProgramText(economicsUnit.exitCapability, locale)}</p></div>
+        <div><span><strong>{unitProgress.completion}%</strong>{programText.progress}</span><span><strong>{unitProgress.mastery}</strong>{programText.mastery}</span><span><strong>{unitProgress.coverage}%</strong>{programText.coverage}</span></div>
+        <Link className="text-action" href={`/programs/business-core/units/${economicsUnit.id}`}>{programText.open}<ArrowIcon /></Link>
       </section>
 
       <section className="domain-mastery">

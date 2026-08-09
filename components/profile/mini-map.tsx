@@ -1,19 +1,28 @@
 "use client";
 
 import { useI18n } from "@/i18n/provider";
+import type { ProfileRollup } from "@/lib/profile/model";
 
-const points = [
-  { x: 50, y: 50, state: "mastered" }, { x: 26, y: 24, state: "learning" }, { x: 74, y: 22, state: "available" },
-  { x: 18, y: 62, state: "available" }, { x: 81, y: 61, state: "mastered" }, { x: 40, y: 82, state: "learning" },
-  { x: 67, y: 83, state: "distant" }, { x: 8, y: 35, state: "distant" }, { x: 91, y: 36, state: "distant" },
+const positions = [
+  { x: 25, y: 23 }, { x: 74, y: 21 }, { x: 17, y: 57 }, { x: 82, y: 58 },
+  { x: 38, y: 82 }, { x: 66, y: 84 }, { x: 8, y: 35 }, { x: 92, y: 36 },
 ];
 
-export function MiniMap() {
+export function MiniMap({ overall, items }: { overall: ProfileRollup; items: ProfileRollup[] }) {
   const { t } = useI18n();
+  const points = items.slice(0, positions.length).map((item, index) => ({ ...item, ...positions[index] }));
   return <div className="mini-expertise-map" aria-label={t("profile.miniMap")}>
     <svg viewBox="0 0 100 100" aria-hidden="true">
-      {points.slice(1).map((point, index) => <line key={index} x1="50" y1="50" x2={point.x} y2={point.y} />)}
+      {points.map((point) => <line key={point.id} x1="50" y1="50" x2={point.x} y2={point.y} />)}
     </svg>
-    {points.map((point, index) => <span key={index} className={point.state} style={{ left: `${point.x}%`, top: `${point.y}%` }} />)}
+    <span className={`map-center ${overall.state}`} aria-label={t("profile.mapPoint", { area: overall.title, mastery: overall.mastery })}>
+      <strong>{overall.mastery}</strong>
+    </span>
+    {points.map((point) => <span
+      key={point.id}
+      className={point.state}
+      style={{ left: `${point.x}%`, top: `${point.y}%` }}
+      title={t("profile.mapPoint", { area: point.title, mastery: point.mastery })}
+    />)}
   </div>;
 }

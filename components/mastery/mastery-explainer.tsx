@@ -1,7 +1,7 @@
 "use client";
 
 import { useI18n } from "@/i18n/provider";
-import type { EvidenceBreakdown } from "@/content/mastery/explanations";
+import type { EvidenceBreakdown } from "@/lib/profile/model";
 
 export function MasteryExplainer({ data, compact = false }: { data: EvidenceBreakdown; compact?: boolean }) {
   const { locale, t } = useI18n();

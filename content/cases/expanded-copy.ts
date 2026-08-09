@@ -6,7 +6,7 @@ export function getExpandedCaseCopy(locale: Locale) {
   return {
     ...base,
     meta: { ...base.meta, caseCode: locale === "es-CL" ? "CASO" : "CASE" },
-    evidence: { ...base.evidence, body: locale === "es-CL" ? "Revisa las fuentes antes de decidir. Contrasta señales de mercado, economía y comportamiento." : "Review the sources before deciding. Contrast market, economic and behavioral signals.", requirement: locale === "es-CL" ? "Revisa todas las fuentes para continuar." : "Review every source to continue." },
-    challenge: { ...base.challenge, context: locale === "es-CL" ? "Skala tensionó un supuesto de tu recomendación. No busca una opción predeterminada." : "Skala pressured an assumption in your recommendation. It is not looking for a predetermined option." },
+    evidence: { ...base.evidence, body: locale === "es-CL" ? "Revisa las fuentes antes de decidir. Compara las señales de mercado, los datos económicos y el comportamiento de los clientes." : "Review the sources before deciding. Contrast market, economic and behavioral signals.", requirement: locale === "es-CL" ? "Revisa todas las fuentes para continuar." : "Review every source to continue." },
+    challenge: { ...base.challenge, context: locale === "es-CL" ? "Skala puso a prueba uno de los supuestos de tu recomendación. No busca una alternativa predeterminada." : "Skala pressured an assumption in your recommendation. It is not looking for a predetermined option." },
   };
 }

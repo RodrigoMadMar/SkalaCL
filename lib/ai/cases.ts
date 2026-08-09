@@ -40,9 +40,9 @@ const markerGroups = {
 const feedback = {
   "es-CL": {
     reasons: {
-      problemDiagnosis: "Distingue el valor del copiloto de la arquitectura necesaria para capturarlo.",
-      evidenceUse: "Conecta fuentes del caso con la recomendación, con espacio para jerarquizar mejor señales y supuestos.",
-      strategicReasoning: "Hace visibles los trade-offs entre velocidad, aprendizaje, control y ventaja futura.",
+      problemDiagnosis: "Distingue el valor que genera el copiloto de la arquitectura necesaria para capturarlo.",
+      evidenceUse: "Conecta las fuentes del caso con la recomendación, aunque aún puede ordenar mejor las señales y los supuestos.",
+      strategicReasoning: "Expone con claridad las tensiones entre velocidad, aprendizaje, control y ventaja futura.",
       decisionCoherence: "La recomendación, el riesgo aceptado y la condición de revisión forman una tesis consistente.",
       adaptability: "Procesa la nueva información sin premiar el cambio de opinión por sí mismo.",
       communication: "La tesis es ejecutiva, específica y permite entender qué se decide.",
@@ -50,7 +50,7 @@ const feedback = {
     },
     strengths: { economics: "Integraste la economía unitaria con la decisión de producto, en lugar de tratar el margen como una métrica posterior.", evidence: "Usaste evidencia concreta para sostener una tesis y no sólo para describir el caso.", adaptability: "Incorporaste la nueva información sin romper la lógica central de tu recomendación.", coherence: "Tu decisión mantiene una relación clara entre tesis, riesgo aceptado y condición de revisión." },
     improvements: { economics: "Modela explícitamente qué ocurre con el margen en segmentos de uso intensivo y qué palanca lo corrige.", evidence: "Jerarquiza las evidencias: separa hechos decisivos, señales débiles y datos que todavía faltan.", boundary: "Define con precisión qué compra NexoDesk, qué conserva y dónde queda la capacidad de cambiar de proveedor.", quality: "Conecta un umbral de calidad por segmento con precio, alcance y costo de servir.", trigger: "Convierte la revisión futura en un umbral medible, con responsable y horizonte temporal." },
-    trajectory: (initial: string, final: string) => `Partiste con ${initial}; tensionaste su supuesto principal y cerraste con ${final}, haciendo explícita una condición de revisión.`,
+    trajectory: (initial: string, final: string) => `Comenzaste con ${initial}; pusiste a prueba su supuesto principal y terminaste con ${final}, dejando explícita una condición de revisión.`,
   },
   en: {
     reasons: {
@@ -69,7 +69,7 @@ const feedback = {
 };
 
 const decisionNames: Record<Locale, Record<CaseDecision, string>> = {
-  "es-CL": { vendor: "un lanzamiento con proveedor", build: "una construcción interna", hybrid: "un modelo híbrido", defer: "postergar el compromiso" },
+  "es-CL": { vendor: "un lanzamiento con proveedor", build: "un desarrollo interno", hybrid: "una combinación de capacidades internas y externas", defer: "postergar la decisión" },
   en: { vendor: "a vendor-led launch", build: "an internal build", hybrid: "a hybrid model", defer: "deferring the commitment" },
 };
 

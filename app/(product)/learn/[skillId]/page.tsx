@@ -9,6 +9,8 @@ import { buildMasteryMap, getVisualState } from "@/lib/demo/state";
 import { useI18n } from "@/i18n/provider";
 import type { TranslationKey } from "@/i18n/config";
 import { BuildVsBuyLearningSession } from "@/components/learning/build-vs-buy-session";
+import { ExpandedSkillSession } from "@/components/learning/expanded-skill-session";
+import { getExpandedSkill } from "@/content/skills/expanded";
 import { useSkalaState } from "@/lib/state/provider";
 
 const contentKeys: Record<string, TranslationKey> = {
@@ -23,6 +25,7 @@ export default function SkillPreviewPage() {
   const { locale, t } = useI18n();
   const { evidence: userEvidence } = useSkalaState();
   if (params.skillId === "ai.build-vs-buy" || params.skillId === "ai-build-buy") return <BuildVsBuyLearningSession />;
+  if (getExpandedSkill(params.skillId)) return <ExpandedSkillSession skillId={params.skillId} />;
   const graph = loadGraph(locale);
   const skill = graph.nodes.find((node) => node.id === params.skillId && node.type === "skill");
   if (!skill) return <div className="page-frame"><p>{t("learn.notFound")}</p></div>;

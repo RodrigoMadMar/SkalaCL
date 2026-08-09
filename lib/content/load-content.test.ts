@@ -7,6 +7,8 @@ describe("content loader", () => {
     const graph = loadGraph();
     expect(graph.nodes.length).toBeGreaterThan(80);
     expect(graph.nodes.filter((node) => node.type === "skill").length).toBeGreaterThan(65);
+    expect(graph.nodes.filter((node) => node.type === "skill" && ["playable", "validated"].includes(node.contentStatus))).toHaveLength(35);
+    expect(graph.nodes.filter((node) => node.type === "skill" && node.contentStatus === "validated")).toHaveLength(20);
   });
 
   it("fails loudly on invalid references", () => {

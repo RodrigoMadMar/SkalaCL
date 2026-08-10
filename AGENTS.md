@@ -14,6 +14,7 @@ Read `/docs/PRD.md` and `/docs/PRODUCT_PRINCIPLES.md` before implementing produc
 - The first deep Domain is AI; Business Core remains the foundational map.
 - Organize future learning by domains/specializations, not rigid career paths.
 - Dark-first visual direction is intentional: AI/research-lab, premium, sparse and editorial.
+- Foundation skills must teach before they demand independent application. Do not confuse assessment density with learning depth.
 
 ## Before coding a feature
 
@@ -22,7 +23,10 @@ Check the relevant spec:
 - Product scope: `/docs/PRD.md`
 - Principles: `/docs/PRODUCT_PRINCIPLES.md`
 - Curriculum: `/docs/CURRICULUM_V1.md`
-- Unit 01 authoring reference: `/docs/UNIT_01_ECONOMICS_OF_BUSINESS.md`
+- Learning experience V2: `/docs/LEARNING_EXPERIENCE_V2.md`
+- Unit 01 base curriculum blueprint: `/docs/UNIT_01_ECONOMICS_OF_BUSINESS.md`
+- Unit 01 V2 teaching addendum: `/docs/UNIT_01_ECONOMICS_OF_BUSINESS_V2.md`
+- Supply & Demand V2 reference skill: `/docs/REFERENCE_SKILL_SUPPLY_DEMAND_V2.md`
 - UX/visual behavior: `/docs/UX_SPEC.md`
 - Brand: `/docs/BRAND_SYSTEM.md`
 - Graph: `/docs/KNOWLEDGE_GRAPH.md`
@@ -37,6 +41,8 @@ If a requested implementation conflicts with these documents, preserve the produ
 
 For Business Core, program, unit, checkpoint or capstone work, treat `CURRICULUM_V1.md` as the curriculum source of truth. Program/unit structures are curated traversals of graph skills and must not create duplicate mastery for the same skill.
 
+For foundational learning-session implementation, `LEARNING_EXPERIENCE_V2.md` is the pedagogical source of truth. During the Unit 01 migration, the V2 addendum supersedes the old interaction-heavy pattern where they conflict. `REFERENCE_SKILL_SUPPLY_DEMAND_V2.md` is the first implementation reference and must be validated before migrating the remaining Unit 01 skills.
+
 ## Coding principles
 
 - TypeScript strict.
@@ -47,6 +53,7 @@ For Business Core, program, unit, checkpoint or capstone work, treat `CURRICULUM
 - Keep recommendation logic deterministic/explainable in v0.
 - Prefer a structured case state machine over free-form chat.
 - Add tests for mastery math, prerequisites/recommendation, content validation and case transitions.
+- Do not award mastery for passive reading; teaching blocks should produce no evidence or exposure-only evidence unless an actual learner action occurs.
 
 ## MVP build order
 
